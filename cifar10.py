@@ -30,30 +30,38 @@ img_channels = 3
 # The data, shuffled and split between train and test sets:
 (X_train, y_train), (X_test, y_test) = cifar10.load_data()
 
-directory = 'C:\ProgrammingOriented//projects//mfml18//residual//layer_output//layer_0'
+# X_train = X_train[:100]
+# X_test = X_test[:100]
+# y_train = y_train[:100]
+# y_test = y_test[:100]
 
-os.mkdir(directory)
-with open('residual//layer_output//layer_' + str(0) + '//trainingData.txt', 'w', newline='') as csvfile:
+input_directory = os.getcwd() + '/residual/layer_output/layer' + str(0)
+
+
+if not os.path.exists(input_directory):
+    os.makedirs(input_directory)
+
+with open(input_directory + '/trainingData.txt', 'w+', newline='') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=' ')
     for label in X_train:
         output = np.array(label).flatten()
         output -= output.min()
         output = output / (output.max())
         spamwriter.writerow(output)
-with open('residual//layer_output//layer_' + str(0) + '//trainingLabel.txt', 'w', newline='') as csvfile:
+with open(input_directory + '/trainingLabel.txt', 'w+', newline='') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=' ')
     for label in y_train:
         row = [0]*nb_classes
         row[label[0]] = 1
         spamwriter.writerow(row)
-with open('residual//layer_output//layer_' + str(0) + '//testingData.txt', 'w', newline='') as csvfile:
+with open(input_directory + '/testingData.txt', 'w+', newline='') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=' ')
     for label in X_test:
         output = np.array(label).flatten()
         output -= output.min()
         output = output / (output.max())
         spamwriter.writerow(output)
-with open('residual//layer_output//layer_' + str(0) + '//testingLabel.txt', 'w', newline='') as csvfile:
+with open(input_directory + '/testingLabel.txt', 'w+', newline='') as csvfile:
     spamwriter = csv.writer(csvfile, delimiter=' ')
     for label in y_test:
         row = [0] * nb_classes
@@ -114,7 +122,8 @@ else:
 
 count = 0
 for layer_index in range(1, len(model.layers), 1):
-    directory = 'C:\ProgrammingOriented//projects//mfml18//residual//layer_output//layer_'+str(layer_index)
+    print('Handle layer', layer_index)
+    directory = os.getcwd() + '/residual/layer_output/layer' + str(layer_index)
     try:
         os.stat(directory)
     except:
@@ -123,8 +132,7 @@ for layer_index in range(1, len(model.layers), 1):
     get_k_layer_output = K.function([model.layers[0].input],
                                       [model.layers[layer_index].output])
 
-
-    with open('residual//layer_output//layer_'+str(layer_index)+'//trainingData.txt', 'w') as csvfile:
+    with open('residual/layer_output/layer_'+str(layer_index)+'/trainingData.txt', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=' ')
         for startingImageIndex in range(int(len(X_train) / 2)):
             sample = X_train[startingImageIndex:startingImageIndex + 2]
@@ -137,13 +145,13 @@ for layer_index in range(1, len(model.layers), 1):
                 output = output/(output.max())
                 print("number of features: " + str(len(output)))
                 spamwriter.writerow(output)
-    with open('residual//layer_output//layer_'+str(layer_index)+'//trainingLabel.txt', 'w') as csvfile:
+    with open('residual/layer_output/layer_'+str(layer_index)+'/trainingLabel.txt', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=' ')
         for label in y_train:
             row = [0] * nb_classes
             row[label[0]] = 1
             spamwriter.writerow(row)
-    with open('residual//layer_output//layer_'+str(layer_index)+'//testingData.txt', 'w') as csvfile:
+    with open('residual/layer_output/layer_'+str(layer_index)+'/testingData.txt', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=' ')
         for startingImageIndex in range(int(len(X_test) / 2)):
             sample = X_test[startingImageIndex:startingImageIndex + 2]
@@ -156,7 +164,7 @@ for layer_index in range(1, len(model.layers), 1):
                 output = output/(output.max())
                 print("number of features: " + str(len(output)))
                 spamwriter.writerow(output)
-    with open('residual//layer_output//layer_'+str(layer_index)+'//testingLabel.txt', 'w') as csvfile:
+    with open('residual/layer_output/layer_'+str(layer_index)+'/testingLabel.txt', 'w') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=' ')
         for label in y_test:
             row = [0] * nb_classes
